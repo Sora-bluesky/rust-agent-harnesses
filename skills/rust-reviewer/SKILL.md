@@ -17,8 +17,8 @@ Use this skill when reviewing Rust changes before merge, before release, or befo
 
 - correctness and behavioral regressions
 - memory and safety issues, including `unsafe` invariants
-- concurrency hazards such as races, deadlocks, missed cancellation, or ordering assumptions
-- API and contract stability
+- concurrency hazards such as races, deadlocks, missed cancellation, ordering assumptions, or undocumented shared-state behavior
+- API and contract stability, including Rust API Guidelines expectations and likely semver impact
 - error semantics and diagnostic quality
 - performance hotspots or obvious allocation and locking regressions
 - missing tests or weak evidence
@@ -35,10 +35,18 @@ Present findings before summary. Each finding should include:
 
 If no findings are present, say so explicitly and note any remaining test or evidence gaps.
 
+## Primary-source cross-checks
+
+- use The Rust Book for ownership, borrowing, error-handling, and concurrency fundamentals
+- use The Rust Reference when the risk depends on precise stable-language semantics
+- use Rust API Guidelines when public API naming, interoperability, predictability, or future-proofing is in scope
+- use Cargo and Clippy command documentation when judging whether evidence is weak, stale, or incomplete
+- use RustSec and `cargo-audit` when dependency risk is part of the review surface
+
 ## Required evidence
 
 - patch or code context reviewed
-- test and lint evidence, or explicit blocker
+- selected evidence profile results, or explicit blocker
 - note on whether public API or behavior changed
 - note on whether concurrency or `unsafe` paths were touched
 
