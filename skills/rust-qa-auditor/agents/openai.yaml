@@ -1,0 +1,4 @@
+interface:
+  display_name: "Rust QA Auditor"
+  short_description: "Audit Rust evidence before merge or release decisions"
+  default_prompt: "Use $rust-qa-auditor to audit the Rust evidence set before merge."

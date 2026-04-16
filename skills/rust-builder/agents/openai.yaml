@@ -1,0 +1,4 @@
+interface:
+  display_name: "Rust Builder"
+  short_description: "Implement Rust changes with explicit evidence gates"
+  default_prompt: "Use $rust-builder to implement this Rust change with explicit verification evidence."
