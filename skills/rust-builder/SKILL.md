@@ -1,0 +1,44 @@
+# rust-builder
+
+## Purpose
+
+Guide Rust implementation work with an explicit checklist that keeps behavior, maintainability, and verification evidence in scope.
+
+## When to use
+
+Use this skill when you are writing, changing, or extending Rust code and need a disciplined implementation path instead of ad hoc edits.
+
+## Inputs expected
+
+- task goal and intended user-visible behavior
+- relevant files, modules, or crate boundaries
+- current failing test, bug report, or verification target
+- constraints such as public API stability, performance limits, or MSRV expectations
+
+## Build/implementation checklist
+
+- define the smallest behavior change to make
+- identify the crate, module, and API surface affected
+- preserve ownership and borrowing clarity; prefer simple lifetimes over clever indirection
+- make error handling explicit and meaningful; avoid lossy `unwrap` or vague error text in production paths
+- check public API stability before renaming types, functions, features, or error variants
+- document concurrency assumptions for shared state, async work, or channel boundaries
+- minimize `unsafe`; if `unsafe` is necessary, narrow the block and state the invariant being protected
+- keep dependencies intentional; prefer standard library or existing crate patterns before adding new crates
+- leave the code ready for `cargo fmt` and `clippy`
+- capture verification evidence before claiming completion
+
+## Expected outputs
+
+- implementation aligned to the requested behavior
+- updated or added tests when behavior changed
+- concise note describing what changed and why
+- explicit blockers or residual risks when verification is incomplete
+
+## Required evidence
+
+- `cargo fmt --check`
+- `cargo clippy -- -D warnings`
+- `cargo test`
+- command output or concise summary for any environment blocker
+

@@ -1,0 +1,87 @@
+name: docs-only
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Verify required files exist
+        shell: bash
+        run: |
+          set -euo pipefail
+          required_files=(
+            "README.md"
+            "LICENSE"
+            "skills/rust-builder/SKILL.md"
+            "skills/rust-reviewer/SKILL.md"
+            "skills/rust-qa-auditor/SKILL.md"
+            "instructions/rust.instructions.md"
+            "prompts/rust-red.prompt.md"
+            "prompts/rust-refactor.prompt.md"
+            "examples/repo-layout-example.md"
+            "examples/cargo-ci-example.md"
+            "examples/usage-examples.md"
+          )
+          for file in "${required_files[@]}"; do
+            test -f "$file" || { echo "Missing required file: $file"; exit 1; }
+          done
+
+      - name: Verify README headings
+        shell: bash
+        run: |
+          set -euo pipefail
+          required_headings=(
+            "## Overview"
+            "## Roles"
+            "## Expected Verification Evidence"
+            "## Installation"
+            "## Usage Patterns"
+            "## Example Workflow"
+            "## Non-Goals"
+            "## License"
+          )
+          for heading in "${required_headings[@]}"; do
+            grep -Fq "$heading" README.md || { echo "Missing README heading: $heading"; exit 1; }
+          done
+
+      - name: Verify skill sections
+        shell: bash
+        run: |
+          set -euo pipefail
+          check_headings() {
+            local file="$1"
+            shift
+            for heading in "$@"; do
+              grep -Fq "$heading" "$file" || { echo "Missing heading '$heading' in $file"; exit 1; }
+            done
+          }
+
+          check_headings "skills/rust-builder/SKILL.md" \
+            "## Purpose" \
+            "## When to use" \
+            "## Inputs expected" \
+            "## Build/implementation checklist" \
+            "## Expected outputs" \
+            "## Required evidence"
+
+          check_headings "skills/rust-reviewer/SKILL.md" \
+            "## Purpose" \
+            "## When to use" \
+            "## Review priorities" \
+            "## Findings format" \
+            "## Required evidence" \
+            "## Non-goals"
+
+          check_headings "skills/rust-qa-auditor/SKILL.md" \
+            "## Purpose" \
+            "## When to use" \
+            "## Evidence checklist" \
+            "## Decision rules" \
+            "## Output contract"
