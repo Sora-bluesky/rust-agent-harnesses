@@ -1,3 +1,8 @@
+---
+name: rust-reviewer
+description: Perform findings-first Rust review with emphasis on correctness, safety, concurrency risk, and contract stability. Use when reviewing Rust changes before merge or release, validating an implementer's work, or producing actionable review findings instead of a summary-first response.
+---
+
 # rust-reviewer
 
 ## Purpose
@@ -42,4 +47,3 @@ If no findings are present, say so explicitly and note any remaining test or evi
 - restating the patch without identifying risk
 - giving summary-first feedback that hides actionable issues
 - requesting speculative refactors unrelated to correctness, maintainability, or evidence quality
-

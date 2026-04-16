@@ -1,3 +1,8 @@
+---
+name: rust-qa-auditor
+description: Validate Rust evidence and quality gates before merge or release decisions. Use when implementation and review are complete, when a maintainer needs an approve or hold decision, or when checking the required evidence set such as cargo fmt, clippy, test, and audit.
+---
+
 # rust-qa-auditor
 
 ## Purpose
@@ -40,4 +45,3 @@ Produce:
 - evidence status for each required check
 - unresolved findings or blockers
 - explicit next action required to move forward
-

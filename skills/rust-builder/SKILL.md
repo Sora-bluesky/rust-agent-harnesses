@@ -1,3 +1,8 @@
+---
+name: rust-builder
+description: Guide Rust implementation work with an explicit checklist for correctness, maintainability, and verification evidence. Use when writing, changing, or extending Rust code; implementing a bug fix or feature; or driving a disciplined builder role in a Rust workflow.
+---
+
 # rust-builder
 
 ## Purpose
@@ -41,4 +46,3 @@ Use this skill when you are writing, changing, or extending Rust code and need a
 - `cargo clippy -- -D warnings`
 - `cargo test`
 - command output or concise summary for any environment blocker
-
