@@ -2,7 +2,7 @@
 
 ## Overview
 
-`rust-agent-harnesses` is a public-safe starter pack for Rust implementation, review, and QA workflows that benefit from explicit role separation and evidence-driven quality gates.
+`rust-agent-harnesses` is a public-safe Codex starter pack for Rust implementation, review, and QA workflows that benefit from explicit role separation and evidence-driven quality gates.
 
 This repository is for teams that want reusable guidance for:
 
@@ -11,6 +11,28 @@ This repository is for teams that want reusable guidance for:
 - release or merge readiness checks through a QA auditor role
 
 The pack is intentionally small. It focuses on durable, reusable guidance and avoids project-specific operations, private infrastructure, or maintainer-only process wording.
+
+The repository is meant to be installed into a consuming repository's `.codex/` directory, where Codex can use the bundled skills, instructions, and prompts as workflow assets.
+
+## What This Pack Is Based On
+
+This pack is not a trained model or a Rust framework. It is a hand-authored workflow pack that encodes reusable guidance for Codex-based Rust work.
+
+The skills and prompts are based on:
+
+- Codex skill and `.codex/` layout conventions
+- general Rust engineering practice around ownership, borrowing, error handling, concurrency, API stability, and `unsafe` minimization
+- evidence-oriented quality gates built around `cargo fmt --check`, `cargo clippy -- -D warnings`, `cargo test`, and `cargo audit`
+- role separation between implementation, review, and QA decision-making
+
+In other words, the repository packages procedural knowledge and review checklists, not model weights or hidden repository-specific state.
+
+It does not rely on:
+
+- private project history
+- local operator runbooks
+- proprietary infrastructure
+- unpublished maintainer-only approval flows
 
 ## Roles
 
@@ -110,4 +132,3 @@ This repository does not include:
 ## License
 
 This repository is released under the MIT License. See [LICENSE](LICENSE).
-
