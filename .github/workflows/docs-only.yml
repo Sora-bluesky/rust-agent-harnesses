@@ -19,6 +19,7 @@ jobs:
           required_files=(
             "README.md"
             "LICENSE"
+            "docs/design-basis.md"
             "skills/rust-builder/SKILL.md"
             "skills/rust-builder/agents/openai.yaml"
             "skills/rust-reviewer/SKILL.md"
@@ -42,11 +43,14 @@ jobs:
           set -euo pipefail
           required_headings=(
             "## Overview"
+            "## What This Pack Is Based On"
+            "## Primary Sources"
             "## Roles"
             "## Expected Verification Evidence"
             "## Installation"
             "## Usage Patterns"
             "## Example Workflow"
+            "## Limitations"
             "## Non-Goals"
             "## License"
           )
@@ -88,3 +92,55 @@ jobs:
             "## Evidence checklist" \
             "## Decision rules" \
             "## Output contract"
+
+      - name: Verify primary-source basis and evidence consistency
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          combined_sources="$(cat README.md docs/design-basis.md)"
+          required_urls=(
+            "https://doc.rust-lang.org/stable/book/"
+            "https://doc.rust-lang.org/stable/reference/"
+            "https://rust-lang.github.io/api-guidelines/"
+            "https://doc.rust-lang.org/cargo/commands/cargo-fmt.html"
+            "https://doc.rust-lang.org/clippy/"
+            "https://doc.rust-lang.org/cargo/commands/cargo-test.html"
+            "https://rustsec.org/"
+            "https://docs.rs/crate/cargo-audit/latest"
+          )
+          for url in "${required_urls[@]}"; do
+            grep -Fq "$url" <<<"$combined_sources" || { echo "Missing source URL: $url"; exit 1; }
+          done
+
+          grep -Fq "## Primary Sources" README.md || { echo "README missing Primary Sources section"; exit 1; }
+          grep -Fq "## Limitations" README.md || { echo "README missing Limitations section"; exit 1; }
+
+          required_roles=("rust-builder" "rust-reviewer" "rust-qa-auditor")
+          for role in "${required_roles[@]}"; do
+            grep -Fq "$role" README.md || { echo "README missing role $role"; exit 1; }
+            grep -Fq "$role" examples/usage-examples.md || { echo "usage-examples missing role $role"; exit 1; }
+            grep -Fq "$role" "skills/$role/SKILL.md" || { echo "skill file missing role $role"; exit 1; }
+          done
+
+          grep -Fq "## Minimal baseline" examples/cargo-ci-example.md || { echo "cargo-ci-example missing minimal baseline"; exit 1; }
+          grep -Fq "## Workspace baseline" examples/cargo-ci-example.md || { echo "cargo-ci-example missing workspace baseline"; exit 1; }
+          grep -Fq "## Strict profile additions" examples/cargo-ci-example.md || { echo "cargo-ci-example missing strict profile additions"; exit 1; }
+
+          profile_commands=(
+            "cargo fmt --check"
+            "cargo clippy -- -D warnings"
+            "cargo test"
+            "cargo audit"
+            "cargo fmt --all -- --check"
+            "cargo clippy --workspace --all-targets --all-features -- -D warnings"
+            "cargo test --workspace --all-targets --all-features"
+            "cargo deny check"
+          )
+          for command in "${profile_commands[@]}"; do
+            grep -Fq "$command" README.md || { echo "README missing evidence command: $command"; exit 1; }
+            grep -Fq "$command" examples/cargo-ci-example.md || { echo "cargo-ci-example missing evidence command: $command"; exit 1; }
+          done
+
+          grep -Fq "bootstrap blocker" README.md || { echo "README missing bootstrap blocker guidance"; exit 1; }
+          grep -Fq "bootstrap blocker" examples/cargo-ci-example.md || { echo "cargo-ci-example missing bootstrap blocker guidance"; exit 1; }

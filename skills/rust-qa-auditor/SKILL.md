@@ -15,15 +15,22 @@ Use this skill after implementation and review are complete, or when a maintaine
 
 ## Evidence checklist
 
-Required evidence:
+Required evidence for the selected profile:
 
-- `cargo fmt --check`
-- `cargo clippy -- -D warnings`
-- `cargo test`
-- `cargo audit`
+- minimal baseline:
+  - `cargo fmt --check`
+  - `cargo clippy -- -D warnings`
+  - `cargo test`
+  - `cargo audit`
+- workspace baseline:
+  - `cargo fmt --all -- --check`
+  - `cargo clippy --workspace --all-targets --all-features -- -D warnings`
+  - `cargo test --workspace --all-targets --all-features`
+  - `cargo audit`
 
 Optional supporting evidence:
 
+- `cargo deny check`
 - benchmark or performance note for hot-path changes
 - targeted integration-test output
 - docs or examples verification when public-facing behavior changed
@@ -36,6 +43,7 @@ Every missing item must be explained with a blocker or rationale.
 - hold when required evidence is missing, stale, or contradicted by code or review findings
 - reject when correctness, safety, or release risk remains unresolved
 - distinguish environment blockers from product risk; both matter, but they are not the same failure mode
+- fail closed when required evidence for the selected profile is absent and no explicit blocker acceptance has been recorded
 
 ## Output contract
 

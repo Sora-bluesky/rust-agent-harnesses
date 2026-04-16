@@ -17,11 +17,12 @@ my-rust-project/
 │  └─ prompts/
 │     ├─ rust-red.prompt.md
 │     └─ rust-refactor.prompt.md
+├─ docs/
+│  └─ engineering-evidence.md
 ├─ src/
 ├─ tests/
 ├─ Cargo.toml
 └─ README.md
 ```
 
-The consuming repository keeps ownership of its own commands, CI policies, and release process. This pack only provides reusable role guidance and prompts.
-
+The consuming repository keeps ownership of its own commands, CI policies, semver promises, and release process. This pack only provides reusable role guidance, prompts, and evidence profiles.

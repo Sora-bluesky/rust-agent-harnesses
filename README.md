@@ -21,8 +21,11 @@ This pack is not a trained model or a Rust framework. It is a hand-authored work
 The skills and prompts are based on:
 
 - Codex skill and `.codex/` layout conventions
-- general Rust engineering practice around ownership, borrowing, error handling, concurrency, API stability, and `unsafe` minimization
-- evidence-oriented quality gates built around `cargo fmt --check`, `cargo clippy -- -D warnings`, `cargo test`, and `cargo audit`
+- language fundamentals from The Rust Programming Language, especially ownership, borrowing, lifetimes, error handling, testing, and concurrency basics
+- language and reference semantics from The Rust Reference when review or QA work must check stable-language behavior rather than rule-of-thumb usage
+- API design guidance from the Rust API Guidelines when public API changes, naming, interoperability, predictability, and future-proofing are in scope
+- formatter, lint, and test commands from the Cargo Book and Clippy documentation, using the documented `cargo fmt`, `cargo clippy`, and `cargo test` command surfaces as the baseline evidence contract
+- dependency vulnerability checks from RustSec and `cargo-audit`, treating advisory data as one evidence source within QA rather than a complete quality signal
 - role separation between implementation, review, and QA decision-making
 
 In other words, the repository packages procedural knowledge and review checklists, not model weights or hidden repository-specific state.
@@ -33,6 +36,19 @@ It does not rely on:
 - local operator runbooks
 - proprietary infrastructure
 - unpublished maintainer-only approval flows
+
+See [docs/design-basis.md](docs/design-basis.md) for the source-to-role mapping that explains how each skill uses these inputs.
+
+## Primary Sources
+
+- [The Rust Programming Language](https://doc.rust-lang.org/stable/book/): provides the language fundamentals that shape builder expectations around ownership, borrowing, errors, testing, and concurrency basics.
+- [The Rust Reference](https://doc.rust-lang.org/stable/reference/): provides the stable-language reference used when reviewer or QA guidance needs semantic confirmation rather than convention.
+- [Rust API Guidelines](https://rust-lang.github.io/api-guidelines/): informs public API review, naming, interoperability, predictability, and future-proofing checks.
+- [cargo fmt](https://doc.rust-lang.org/cargo/commands/cargo-fmt.html): defines the formatter command surface used in the evidence baseline and workspace profiles.
+- [Clippy Documentation](https://doc.rust-lang.org/clippy/): defines the lint command surface and explains the lint categories used by the evidence contract.
+- [cargo test](https://doc.rust-lang.org/cargo/commands/cargo-test.html): defines the test command surface for unit, integration, and documentation test execution.
+- [RustSec Advisory Database](https://rustsec.org/): provides the vulnerability data source that informs dependency-risk checks in QA.
+- [cargo-audit](https://docs.rs/crate/cargo-audit/latest): defines the Cargo subcommand used to turn RustSec advisory data into an actionable dependency audit step.
 
 ## Roles
 
@@ -46,21 +62,42 @@ These roles can be used by humans, AI agents, or mixed human-plus-agent workflow
 
 ## Expected Verification Evidence
 
-The default evidence set is:
+Use one of these profiles and record which profile was chosen for a given change.
+
+### Minimal Baseline
+
+Use this when the consumer repository is a single crate or is still bootstrapping its CI surface.
 
 - `cargo fmt --check`
 - `cargo clippy -- -D warnings`
 - `cargo test`
 - `cargo audit`
+
+### Workspace Baseline
+
+Use this when the consumer repository is a workspace or needs wider target and feature coverage.
+
+- `cargo fmt --all -- --check`
+- `cargo clippy --workspace --all-targets --all-features -- -D warnings`
+- `cargo test --workspace --all-targets --all-features`
+- `cargo audit`
+
+### Strict Profile
+
+Use this when the consumer repository wants stronger release gates or broader supply-chain checks.
+
+- `cargo deny check`
+- documentation or examples verification
+- benchmark note for hot paths
+- targeted integration tests
+
+Every profile should still include:
+
 - concise findings summary and notable limitations
+- explicit note when public API, concurrency behavior, or `unsafe` usage changed
+- explicit blocker handling when a command could not be run
 
-Optional evidence may include:
-
-- benchmark notes for performance-sensitive changes
-- targeted integration-test output
-- documentation verification when public APIs or operator-facing behavior changes
-
-If a command cannot be run in the current environment, record the blocker explicitly instead of silently omitting it.
+If `cargo audit` is not available yet, treat that as a bootstrap blocker for the selected profile and record the blocker explicitly instead of silently omitting the command.
 
 ## Installation
 
@@ -111,12 +148,19 @@ Recommended operating rules:
 
 1. Use `prompts/rust-red.prompt.md` to define the smallest failing behavior or verification target.
 2. Implement with `skills/rust-builder/SKILL.md`.
-3. Capture formatter, lint, test, and audit evidence.
+3. Capture evidence with the minimal baseline, workspace baseline, or strict profile that matches the repository.
 4. Review the change with `skills/rust-reviewer/SKILL.md`.
 5. Validate the evidence package with `skills/rust-qa-auditor/SKILL.md`.
 6. Use `prompts/rust-refactor.prompt.md` after tests are green to simplify structure without semantic drift.
 
 See `examples/usage-examples.md` for concrete adoption patterns.
+
+## Limitations
+
+- This repository is a reusable harness pack, not the Rust language specification itself.
+- Final engineering judgment stays with the consuming team or repository owner.
+- The command set in this repository is a baseline; consuming repositories may need to adjust it for workspace layout, platform constraints, or additional policy tools.
+- `cargo audit` provides a dependency vulnerability view and does not replace code review, testing, API review, or broader QA judgment.
 
 ## Non-Goals
 
